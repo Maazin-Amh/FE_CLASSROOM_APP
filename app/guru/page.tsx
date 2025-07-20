@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { signOut, useSession } from "next-auth/react";
 import useGuruModule from "./lib";
@@ -94,21 +95,29 @@ const GuruPage = () => {
     setFieldValue,
   } = profileformik;
 
-
-  if(isFetching) {
-    return (
-      <div className="flex justify-center items-center w-full h-screen">
-        <Loading/>
-      </div>
-    )
-  }
+  // if(isFetching) {
+  //   return (
+  //     <div className="flex justify-center items-center w-full h-screen">
+  //       <Loading/>
+  //     </div>
+  //   )
+  // }
 
   return (
     <>
+    <div className="bg-teal-600 cursor-pointer z-50 sticky text-sm p-2 font-medium text-center text-white">
+     🎊 Happy New Year By Developer
+    </div>
       <header className="bg-white border-b h-16 flex items-center justify-between px-3 z-50  mb-10 border-slate-4000 sticky">
         <div className="item-center flex items-center">
+          <img
+            src="https://i.ibb.co.com/smg9rNW/logo.png"
+            alt=""
+            className="h-[60px]"
+          />
+
           <Link href={""}>
-            <p className="text-3xl font-semibold">ClassMeet</p>
+            <p className="text-xl text-[#5f6368] font-normal">Classmeet</p>
           </Link>
         </div>
         <div className="flex gap-7">
@@ -380,7 +389,7 @@ const GuruPage = () => {
         </div>
       </div>
 
-      <main className="flex flex-wrap gap-7 justify-start px-10">
+      <main className="flex flex-wrap gap-7 z-50  justify-start px-10">
         {data?.data
           .filter((itemclass) => itemclass.created_by.id === session?.user.id)
           .map((itemclass, index) => (
@@ -389,9 +398,9 @@ const GuruPage = () => {
                 onClick={() => {
                   router.push(`/guru/detail/${itemclass.id}`);
                 }}
-                className="border-[1px] cursor-pointer flex justify-between flex-col rounded-md w-[302px] h-[296px] border-slate-4000"
+                className="border-[1px] bg-white cursor-pointer flex justify-between flex-col rounded-md w-[302px] h-[296px] border-slate-4000"
               >
-                <div className="bg-[url('https://i.ibb.co.com/wrT9QPt/img-class.jpg')]  px-[1rem] pt-[1rem] pb-[0.75rem] flex relative flex-col justify-between rounded-t-md h-[5rem] bg-center bg bg-cover">
+                <div className="bg-[url('https://gstatic.com/classroom/themes/img_reachout.jpg')]  px-[1rem] pt-[1rem] pb-[0.75rem] flex relative flex-col justify-between rounded-t-md h-[5rem] bg-center bg bg-cover">
                   <div className="flex justify-between items-center">
                     <div className="text-white">
                       <h1 className="hover:underline">
@@ -404,7 +413,7 @@ const GuruPage = () => {
                   </div>
                 </div>
 
-                <div className="border-t h-[2rem] border-slate-4000 px-[1rem]">
+                <div className="border-t h-[2rem]  border-slate-4000 px-[1rem]">
                   code :
                   <h3 className="float-right font-semibold">
                     {itemclass.code}
@@ -413,7 +422,7 @@ const GuruPage = () => {
               </div>
 
               <Menu>
-                <MenuButton className="inline-flex absolute top-3 right-3 items-center gap-2 rounded-full  py-3 px-4.5 font-semibold hover:bg-white/20 text-white focus:outline-none 0">
+                <MenuButton className="flex justify-center w-10 h-10 absolute top-3 right-3 items-center gap-2 rounded-full py-3 px-4.5 font-semibold hover:bg-white/20 text-white focus:outline-none">
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </MenuButton>
                 <Transition
@@ -426,7 +435,7 @@ const GuruPage = () => {
                 >
                   <MenuItems
                     anchor="bottom end"
-                    className="w-52 origin-top-right rounded-xl bg-white shadow-sm p-1 text-sm/6 text-white [--anchor-gap:var(--spacing-1)] focus:outline-none"
+                    className=" origin-top-right rounded-xl bg-white shadow-sm p-1 text-sm/6 text-white [--anchor-gap:var(--spacing-1)] focus:outline-none"
                   >
                     <MenuItem>
                       <button

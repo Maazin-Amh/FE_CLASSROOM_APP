@@ -135,7 +135,7 @@ export default function UpdateKategori({ params }: { params: { id: string } }) {
               </div>
                   <h2 className="text-lg font-bold">
                     {
-                      datatugas?.data?.find((mydata) => mydata.id)?.created_by
+                      data?.created_by
                         .nama
                     }{" "}
                     posted an assignment: {tugas.judul}

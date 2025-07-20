@@ -94,7 +94,7 @@ export default function UpdateKategori({ params }: { params: { id: string } }) {
               {/* Upcoming Section */}
               <div className="bg-white p-4 rounded shadow-md">
                 <h2 className="text-lg font-bold mb-2">Upcoming</h2>
-                <p>No work due soon</p>
+                <p>Update</p>
                 <button className="text-slate-900 mt-2">View all</button>
               </div>
 
@@ -105,7 +105,7 @@ export default function UpdateKategori({ params }: { params: { id: string } }) {
                     src={data?.created_by.avatar}
                     className="w-10 h-10 rounded-full object-cover  flex items-center justify-center text-xl font-bold text-gray-600"
                   />
-                  <p>Announce something to your class</p>
+                  <p>Hello class!</p>
                 </div>
               </div>
 
@@ -113,7 +113,8 @@ export default function UpdateKategori({ params }: { params: { id: string } }) {
               {data?.tugas_by?.map((tugas) => (
                 <div
                   key={tugas.id}
-                  className=" hover:bg-slate-50 rounded-md p-4 flex items-center gap-3 w-full md:col-span-3 relative"
+                  onClick={() => route.push(`/guru/pengumpulan-tugas/${tugas.id}`)}
+                  className="cursor-pointer hover:bg-slate-50 rounded-md p-4 flex items-center gap-3 w-full md:col-span-3 relative"
                 >
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-center bg-slate-900">
                     <svg
@@ -129,8 +130,7 @@ export default function UpdateKategori({ params }: { params: { id: string } }) {
                   </div>
                   <h2 className="text-lg font-bold">
                     {
-                      datatugas?.data?.find((mydata) => mydata.id)?.created_by
-                        .nama
+                      "You"
                     }{" "}
                     posted an assignment: {tugas.judul}
                   </h2>

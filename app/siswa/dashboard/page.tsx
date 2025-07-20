@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
@@ -76,21 +77,29 @@ const Dashboard = () => {
     setFieldValue,
   } = profileformik;
 
-  if(isFetching) {
-    return (
-      <div className="flex justify-center items-center w-full h-screen">
-        <Loading/>
-      </div>
-    )
-  }
-
+  // if(isFetching) {
+  //   return (
+  //     <div className="flex justify-center items-center w-full h-screen">
+  //       <Loading/>
+  //     </div>
+  //   )
+  // }
 
   return (
     <>
+     <div className="bg-teal-600 cursor-pointer z-50 sticky text-sm p-2 font-medium text-center text-white">
+     🎊 Happy New Year By Developer
+    </div>
       <header className="bg-white border-b h-16 flex items-center justify-between px-3 z-50  mb-10 border-slate-4000 sticky">
-        <div className="item-center flex items-center">
+      <div className="item-center flex items-center">
+          <img
+            src="https://i.ibb.co.com/smg9rNW/logo.png"
+            alt=""
+            className="h-[60px]"
+          />
+
           <Link href={""}>
-            <p className="text-3xl font-bold">ClassMeet</p>
+            <p className="text-xl text-[#5f6368] font-normal">Classmeet</p>
           </Link>
         </div>
         <div className="flex gap-7">
@@ -349,7 +358,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <main className="flex flex-wrap gap-7 justify-start px-10">
+      <main className="flex flex-wrap gap-7 z-50 justify-start px-10">
         {data?.data
           .filter((itemclass) =>
             itemclass.join_by.some(
@@ -362,7 +371,7 @@ const Dashboard = () => {
                 onClick={() => {
                   router.push(`/siswa/detail/${itemclass.id}`);
                 }}
-                className="border-[1px] cursor-pointer flex justify-between flex-col rounded-md w-[302px] h-[296px] border-slate-4000"
+                className="border-[1px] bg-white cursor-pointer flex justify-between flex-col rounded-md w-[302px] h-[296px] border-slate-4000"
               >
                 <div className="bg-[url('https://i.ibb.co.com/wrT9QPt/img-class.jpg')]  px-[1rem] pt-[1rem] pb-[0.75rem] flex relative flex-col justify-between rounded-t-md h-[5rem] bg-center bg bg-cover">
                   <div className="flex justify-between items-center">
@@ -405,6 +414,9 @@ const Dashboard = () => {
             </section>
           ))}
       </main>
+      <footer>
+        <img src="https://i.ibb.co.com/vxWh3Fs/winter-png-file-clipart-6.png" alt="" draggable="false" className="fixed w-1/4 bottom-1 right-0 -z-50" />
+      </footer>
     </>
   );
 };

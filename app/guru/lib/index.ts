@@ -25,7 +25,7 @@ const useGuruModule = () => {
   const { toastError, toastSuccess, toastWarning } = useToast();
   const defaultParams = {
     page: 1,
-    pageSize: 10,
+    pageSize: 100000,
   };
   const getClasslist = async (params: ClassListFilter): Promise<ClassList> => {
     return axiosAuthClient

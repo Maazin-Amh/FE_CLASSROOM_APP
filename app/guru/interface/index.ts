@@ -19,7 +19,6 @@ interface Class {
 
   tugas_by: tugas_by[];
   join_by: join_by[];
-
 }
 
 interface tugas_by {
@@ -34,6 +33,15 @@ interface join_by {
   id: number;
   username: string;
   avatar?: string;
+}
+
+interface submites {
+  id: number;
+  files: string;
+  created_by: {
+    id: number;
+    nama: string;
+  };
 }
 
 export interface Tugas {
@@ -55,6 +63,8 @@ export interface Tugas {
     id: number;
     nama: string;
   };
+
+  submites: submites[];
 
   created_at: string;
   updated_at: string;
