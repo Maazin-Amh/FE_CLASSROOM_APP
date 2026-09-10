@@ -6,7 +6,7 @@ interface FileResponse extends BaseResponseSuccess {
     file_url: string;
     file_name: string;
     file_size: number;
-    file_type: string,
+    file_type: string;
   };
 }
 const useUploadFile = () => {
@@ -17,7 +17,7 @@ const useUploadFile = () => {
     form.append("file", file);
 
     return axiosAuthClient
-      .post("/upload/file", form, {
+      .post("upload/file", form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

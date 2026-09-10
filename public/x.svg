@@ -1,0 +1,13 @@
+ <svg
+
+            xmlns="http://www.w3.org/2000/svg"
+
+            viewBox="0 0 24 24"
+
+            className="size-5 fill-current"
+
+          >
+
+            <path d="M18.24 2H21.7l-7.56 8.64L23 22h-6.83l-5.35-7-6.13 7H1.22l8.09-9.25L1 2h7l4.84 6.4L18.24 2Zm-1.2 17.8h1.9L7.07 4.08H5.03L17.04 19.8Z" />
+
+          </svg>

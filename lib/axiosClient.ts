@@ -1,12 +1,12 @@
 import axios, { AxiosInstance } from "axios";
 
 export const axiosClient: AxiosInstance = axios.create({
-  baseURL: "http://localhost:4400",
+  baseURL: "https://be-classroom-app.vercel.app/",
   headers: { "Content-Type": "application/json" },
 });
 
 export const axiosClientRefresh: AxiosInstance = axios.create({
-  baseURL: "http://localhost:4400",
+  baseURL: "https://be-classroom-app.vercel.app/",
   headers: { "Content-Type": "application/json" },
 });
 
