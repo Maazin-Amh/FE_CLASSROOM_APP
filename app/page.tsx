@@ -9,9 +9,6 @@ export default function Home() {
   const route = useRouter();
   return (
     <>
-      <div className="bg-doff cursor-pointer z-50 sticky text-sm p-2 font-medium text-center text-white">
-        WEBSITE INI MASIH DALAM TAHAP PENGEMBANGAN  🛠️
-      </div>
       <header className="flex sticky top-0 flex-wrap sm:justify-start sm:flex-col z-40 w-full bg-white border-b border-gray-200 text-sm pb-2 sm:pb-0">
         <nav
           className="relative max-w-[85rem] w-full mx-auto py-2 md:py-0 px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
@@ -28,7 +25,7 @@ export default function Home() {
             <div className="sm:hidden">
               <button
                 type="button"
-                className="hs-collapse-toggle size-9 flex justify-center items-center text-sm font-semibold rounded-lg border border-gray-200 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
+                className="hs-collapse-toggle size-9 flex justify-center items-center text-sm font-semibold  border border-gray-200 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
                 data-hs-collapse="#navbar-collapse-with-animation"
                 aria-controls="navbar-collapse-with-animation"
                 aria-label="Toggle navigation"
@@ -108,8 +105,8 @@ export default function Home() {
                   online atau daring.
                 </p>
                 <button
-                  onClick={() => route.push("/login")}
-                  className="bg-doff text-littlewhite w-36 h-12 rounded-full"
+                  onClick={() => route.push("/register")}
+                  className="bg-doff text-littlewhite w-36 h-12 "
                 >
                   Daftar Gratis
                 </button>
@@ -143,7 +140,7 @@ export default function Home() {
           <div className="w-full md:w-1/2">
             <img
               src="https://i.ibb.co.com/KxxcHDkh/IMG-0621.jpg"
-              className="h-[300px] w-full rounded-2xl object-cover brightness-50 md:h-[450px]"
+              className="h-[300px] w-full object-cover brightness-50 md:h-[450px]"
             />
           </div>
         </section>
@@ -157,21 +154,18 @@ export default function Home() {
               <a
                 href="https://github.com/Maazin-Amh"
                 target="_blank"
-                className="transition hover:text-orangebold"
               >
                 <img src={"/github.svg"} className="size-5" />
               </a>
               <a
                 href="https://www.linkedin.com/in/ariiq-maazin/"
                 target="_blank"
-                className="transition hover:text-orangebold"
               >
                 <img src={"/linkedin.svg"} className="size-5" />
               </a>
               <a
                 href="https://x.com/ariiqmaazin"
                 target="_blank"
-                className="transition hover:text-orangebold"
               >
                 <img src={"/x.svg"} className="size-5" />
               </a>

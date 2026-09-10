@@ -16,11 +16,11 @@ import useSiswaModule from "../lib/lindex";
 import useAuthModule from "@/app/auth/lib";
 import Loading from "@/components/loading";
 
-export const JoinSchema = yup.object().shape({
+ const JoinSchema = yup.object().shape({
   code: yup.string().nullable().default("").required("isi code class"),
 });
 
-export const ProfileSiswaSchema = yup.object().shape({
+ const ProfileSiswaSchema = yup.object().shape({
   nama: yup
     .string()
     .nullable()

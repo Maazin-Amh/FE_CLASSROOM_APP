@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
-import "react-tabs/style/react-tabs.css";
 import useGuruModule from "../../lib";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";

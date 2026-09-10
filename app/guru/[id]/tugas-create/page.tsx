@@ -14,9 +14,8 @@ import { TugasCreatePayload } from "../../interface";
 import useGuruModule from "../../lib";
 import dynamic from "next/dynamic";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 
-export const CreateTugasSchema = yup.object().shape({
+const CreateTugasSchema = yup.object().shape({
   judul: yup
     .string()
     .nullable()

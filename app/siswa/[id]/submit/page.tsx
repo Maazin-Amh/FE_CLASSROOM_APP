@@ -12,13 +12,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import dynamic from "next/dynamic";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { TugasCreatePayload } from "@/app/guru/interface";
 import { SubmitPayload } from "../../interface";
 import useSiswaModule from "../../lib/lindex";
 import { useRouter } from "next/navigation";
 
-export const CreateSubmitSchema = yup.object().shape({
+ const CreateSubmitSchema = yup.object().shape({
   files: yup.string().nullable().default("").required(""),
 });
 

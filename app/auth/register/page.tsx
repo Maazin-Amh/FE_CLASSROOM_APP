@@ -1,14 +1,16 @@
 "use client";
-import { useFormik, Form, FormikProvider, getIn } from "formik";
 
+import { useFormik, Form, FormikProvider, getIn } from "formik";
 import * as yup from "yup";
-import { useRouter } from "next/navigation";
+
 import InputText from "@/components/InputText";
-import { RegisterPayload } from "../interface";
-import useAuthModule from "../lib";
 import Select from "@/components/Select";
 
-export const registerallSchema = yup.object().shape({
+import { RegisterPayload } from "../interface";
+import useAuthModule from "../lib";
+import { useRouter } from "next/navigation";
+
+const registerallSchema = yup.object().shape({
   nama: yup
     .string()
     .nullable()
@@ -38,313 +40,172 @@ export const registerallSchema = yup.object().shape({
     .string()
     .nullable()
     .default("")
-    .min(8)
+    .min(8, "Password minimal 8 karakter")
     .required("tolong isi terlebih dahulu"),
 
-  avatar: yup
-    .string()
-    .nullable()
-    .default(""),
+  avatar: yup.string().nullable().default(""),
 });
 
-export const userRole = [
+ const userRole = [
   {
-    value: 'Guru',
-    label: 'guru',
+    value: "Guru",
+    label: "guru",
   },
   {
-    value: 'Siswa',
-    label: 'siswa',
-  }
+    value: "Siswa",
+    label: "siswa",
+  },
 ];
 
-const SiswaRegister = () => {
-  const route = useRouter();
+const Register = () => {
   const { useRegister } = useAuthModule();
   const { mutate, isLoading } = useRegister();
+  const route = useRouter();
   const formik = useFormik<RegisterPayload>({
     initialValues: registerallSchema.getDefault(),
+
     validationSchema: registerallSchema,
+
     enableReinitialize: true,
+
     onSubmit: (payload) => {
       mutate(payload);
     },
   });
-  const {
-    handleChange,
-    handleSubmit,
-    setFieldValue,
-    handleBlur,
-    values,
-    errors,
-  } = formik;
+
+  const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
+    formik;
 
   return (
-    <>
-      <div className="flex w-full h-screen relative justify-center items-center">
+    <div className="block md:mt-0 mt-10 md:flex md:min-h-screen md:w-full">
+      <div className="flex flex-col md:w-1/2 justify-center px-10">
+        <span>
+          <h1 className="text-6xl font-bold mb-4">Buat Akun</h1>
+          <p className="mb-4 font-normal">
+            Buat Akun Secara Gratis Dengan Email
+          </p>
+        </span>
         <FormikProvider value={formik}>
-          <div data-hs-stepper="" className="">
-            <ul className="relative flex opacity-0 flex-row gap-x-2">
-              <li
-                className="flex items-center gap-x-2  shrink basis-0 flex-1 group"
-                data-hs-stepper-nav-item='{  "index": 1 }'
-              ></li>
-              <li
-                className="flex items-center gap-x-2 shrink basis-0 flex-1 group"
-                data-hs-stepper-nav-item='{"index": 2}'
-              ></li>
-              <li
-                className="flex items-center gap-x-2 shrink basis-0 flex-1 group"
-                data-hs-stepper-nav-item='{"index": 3}'
-              ></li>
+          <Form onSubmit={handleSubmit} className="w-full max-w-md">
+            <div className="mb-5">
+              <InputText
+                value={values.email}
+                placeholder="example@gmail.com"
+                id="email"
+                name="email"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isError={getIn(touched, "email") && getIn(errors, "email")}
+                messageError={
+                  getIn(touched, "email") ? getIn(errors, "email") : ""
+                }
+                className="py-3 px-4 block w-full border border-chocolate"
+              />
+            </div>
 
-              <li
-                className="flex items-center gap-x-2 shrink basis-0 flex-1 group"
-                data-hs-stepper-nav-item='{"index": 4}'
-              ></li>
+            <div className="mb-5">
+              <InputText
+                value={values.username}
+                placeholder="your username"
+                id="username"
+                name="username"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isError={
+                  getIn(touched, "username") && getIn(errors, "username")
+                }
+                messageError={
+                  getIn(touched, "username") ? getIn(errors, "username") : ""
+                }
+                className="py-3 px-4 block w-full border border-chocolate"
+              />
+            </div>
 
-              <li
-                className="flex items-center gap-x-2 shrink basis-0 flex-1 group"
-                data-hs-stepper-nav-item='{"index": 5}'
-              ></li>
-            </ul>
+            <div className="mb-5">
+              <InputText
+                value={values.password}
+                placeholder="Password"
+                id="password"
+                name="password"
+                type="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isError={
+                  getIn(touched, "password") && getIn(errors, "password")
+                }
+                messageError={
+                  getIn(touched, "password") ? getIn(errors, "password") : ""
+                }
+                className="py-3 px-4 block w-full border border-chocolate"
+              />
+            </div>
+            <div className="mb-5">
+              <InputText
+                value={values.nama}
+                placeholder="Nama"
+                id="nama"
+                name="nama"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isError={getIn(touched, "nama") && getIn(errors, "nama")}
+                messageError={
+                  getIn(touched, "nama") ? getIn(errors, "nama") : ""
+                }
+                className="py-3 px-4 block w-full border border-chocolate"
+              />
+            </div>
 
-            <Form onSubmit={handleSubmit}>
-              <div className="relative">
-                <div
-                  data-hs-stepper-content-item='{"index": 1}'
-                  style={{ display: "none" }}
+            <div className="mb-5">
+              <Select
+                value={values.role}
+                onBlur={handleBlur}
+                id="role"
+                name="role"
+                options={userRole}
+                isError={getIn(touched, "role") && getIn(errors, "role")}
+                messageError={
+                  getIn(touched, "role") ? getIn(errors, "role") : ""
+                }
+                onChange={handleChange}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="
+                w-full
+                py-3
+                px-4
+                inline-flex
+                justify-center
+                items-center
+                text-sm
+                font-medium
+                bg-chocolate
+                text-littlewhite
+                disabled:opacity-50
+                disabled:pointer-events-none
+              "
+            >
+              {isLoading ? "sedang buat akun..." : "Buat Akun"}
+            </button>
+            <div className="text-center">
+              <p className="mt-2 text-sm text-doff">
+                Sudah Punya Akun ?
+                <button
+                  onClick={() => route.push("/login")}
+                  className="text-doff pl-1 decoration-2 hover:underline font-medium "
                 >
-                  <div className="bg-white rounded-lg border border-gray-200 w-[440px] h-[339px]">
-                    <section className="py-24 px-5">
-                      <label
-                        htmlFor="email"
-                        className="block text-xl font-bold mb-2 "
-                      >
-                        Create account
-                      </label>
-                      <InputText
-                        value={values.email}
-                        placeholder="example@gmail.com"
-                        id="email"
-                        name="email"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isError={getIn(errors, "email")}
-                        messageError={getIn(errors, "email")}
-                        className="w-full p-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                      />
-                      <p className="mt-4 text-sm">
-                        You can only join the class because of your role as a
-                        student
-                      </p>
-                    </section>
-                  </div>
-                </div>
-
-                <div
-                  data-hs-stepper-content-item='{"index": 2}'
-                  style={{ display: "none" }}
-                >
-                  <div className="bg-white rounded-lg border border-gray-200 w-[440px] h-[339px]">
-                    <section className="py-24 px-5">
-                      <label
-                        htmlFor="username"
-                        className="block text-xl font-bold mt-5"
-                      >
-                        Username
-                      </label>
-                      <InputText
-                        value={values.username}
-                        placeholder="your username"
-                        id="username"
-                        name="username"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isError={getIn(errors, "username")}
-                        messageError={getIn(errors, "username")}
-                        className="w-full p-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                      />
-                    </section>
-                  </div>
-                </div>
-
-                <div
-                  data-hs-stepper-content-item='{"index": 3}'
-                  style={{ display: "none" }}
-                >
-                  <div className="bg-white rounded-lg border border-gray-200 w-[440px] h-[339px]">
-                    <section className="py-24 px-5">
-                      <label
-                        htmlFor="password"
-                        className="block text-xl font-bold mb-2 "
-                      >
-                        Password
-                      </label>
-                      <InputText
-                        value={values.password}
-                        placeholder="******"
-                        id="password"
-                        name="password"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isError={getIn(errors, "password")}
-                        messageError={getIn(errors, "password")}
-                        className="w-full p-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                      />
-                      <p className="mt-4 text-sm">
-                        Enter the password you would like to use with your
-                        account.
-                      </p>
-                    </section>
-                  </div>
-                </div>
-
-                <div
-                  data-hs-stepper-content-item='{"index": 4}'
-                  style={{ display: "none" }}
-                >
-                  <div className="bg-white rounded-lg border border-gray-200 w-[440px] h-[339px]">
-                    <section className="py-12 px-5">
-                      <label
-                        htmlFor="nama"
-                        className="block text-xl font-bold mb-2 "
-                      >
-                        Nama
-                      </label>
-                      <InputText
-                        value={values.nama}
-                        placeholder="your name"
-                        id="nama"
-                        name="nama"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isError={getIn(errors, "nama")}
-                        messageError={getIn(errors, "nama")}
-                        className="w-full p-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                      />
-
-                      <label
-                        htmlFor="role"
-                        className="block text-xl font-bold mt-3 mb-2 "
-                      >
-                        Role
-                      </label>
-                      <Select
-                        value={values.role}
-                        onBlur={handleBlur}
-                        id="role"
-                        name="role"
-                        options={userRole}
-                        isError={getIn(errors, "role")}
-                        messageError={getIn(errors, "role")}
-                        onChange={handleChange}
-                      />
-                    </section>
-                  </div>
-                </div>
-                <div
-                  data-hs-stepper-content-item='{"index": 5}'
-                  style={{ display: "none" }}
-                >
-                  <div className="bg-white rounded-lg border border-gray-200 w-[440px] h-[339px]">
-                    <section className="py-12 px-5">
-                      <label
-                        htmlFor="jabatan"
-                        className="block text-xl font-bold mb-2 "
-                      >
-                        Photo Profile
-                      </label>
-                      <picture className="justify-center my-5 flex">
-                        <img
-                          className="rounded-full w-20 h-20"
-                          src={
-                            values.avatar ||
-                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-                          }
-                          alt="img"
-                        />
-                      </picture>
-                      <div className="flex gap-3 m-3">
-                        <input
-                          type="file"
-                          id="file"
-                          className="block w-full text-sm text-gray-500
-                        file:me-4 file:py-2 file:px-4
-                        file:rounded-lg file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-slate-900 file:text-white
-                        hover:file:bg-slate-700
-                        file:disabled:opacity-50 file:disabled:pointer-events-none
-                       "
-                          onChange={(event: any) => {
-                            const file = event.target.files[0];
-
-                            // if (file.type !== "image/jpeg") {
-                            //   return alert("type tidak sesauai");
-                            // }
-
-                            let reader = new FileReader();
-                            reader.onloadend = () => {
-                              setFieldValue("avatar", reader.result);
-                            };
-                            reader.readAsDataURL(file);
-                            setFieldValue("file", file);
-
-                            console.log(file);
-                          }}
-                        />
-                      </div>
-                    </section>
-                  </div>
-                </div>
-
-                <div className="absolute flex w-full justify-between bottom-6 pr-5 pl-5">
-                  <button
-                    className="hs-stepper-disabled:opacity-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50  disabled:pointer-events-none "
-                    type="button"
-                    data-hs-stepper-back-btn=""
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none "
-                    data-hs-stepper-next-btn=""
-                  >
-                    Next
-                    <svg
-                      className="flex-shrink-0 size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M5 12h14"></path>
-                      <path d="m12 5 7 7-7 7"></path>
-                    </svg>
-                  </button>
-                  <button
-                    type="submit"
-                    data-hs-stepper-content-item='{"index": 5}'
-                    style={{ display: "none" }}
-                    className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none "
-                  >
-                    Create Account
-                  </button>
-                </div>
-              </div>
-            </Form>
-          </div>
+                  Masuk
+                </button>
+              </p>
+            </div>
+          </Form>
         </FormikProvider>
       </div>
-    </>
+      <div className="hidden md:block w-1/2 min-h-screen  bg-gradient-to-bl from-orangebold to-chocolate"></div>
+    </div>
   );
 };
 
-export default SiswaRegister;
+export default Register;

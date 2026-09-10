@@ -1,7 +1,7 @@
 import { useToast as chakraUseToast } from "@chakra-ui/react";
 
 export const useToast = () => {
-  const toast = chakraUseToast(); // Gunakan useToast dari Chakra UI
+  const toast = chakraUseToast(); 
 
   const toastSuccess = (message: any) => {
     toast({

@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import "react-tabs/style/react-tabs.css";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import striptags from "striptags";

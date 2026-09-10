@@ -186,7 +186,7 @@ const useAuthModule = () => {
       {
         onSuccess: (res) => {
           toastSuccess(res.message);
-          router.push("/login/guru");
+          router.push("/login");
         },
         onError: (error: any) => {
           if (error.response.status == 422) {

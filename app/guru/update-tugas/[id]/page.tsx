@@ -12,9 +12,8 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 
-export const CreateTugasSchema = yup.object().shape({
+ const CreateTugasSchema = yup.object().shape({
   judul: yup
     .string()
     .nullable()

@@ -28,7 +28,7 @@ const Select: React.FC<
   return (
     <section className="relative">
       <svg
-        className="w-2 text-gray-400 overflow-visible absolute h-full right-3 group-hover:text-gray-600"
+        className="w-2 text-chocolate overflow-visible absolute h-full right-3 group-hover:text-gray-600"
         width="16"
         height="16"
         viewBox="0 0 16 16"
@@ -48,7 +48,7 @@ const Select: React.FC<
         name={name}
         id={id}
         className={clsx(
-          `py-2 px-3 pr-9 block border appearance-none w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500`,
+          `py-2 px-3 pr-9 block border appearance-none w-full border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500`,
           {
             "border-red-500 border-2": isError,
             "border-gray-700": !isError,

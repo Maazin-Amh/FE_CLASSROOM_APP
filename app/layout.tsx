@@ -55,7 +55,13 @@ export default function RootLayout({ children, session }: NextAuthProps) {
       <body className={poppins.className}>
         <NextAuthProvider session={session}>
           <ReactQuery>
-            <Providers>{children} </Providers>
+            <Providers>
+              {" "}
+              <div className="bg-doff cursor-pointer z-50 sticky text-sm p-2 font-medium text-center text-white">
+                WEBSITE INI MASIH DALAM TAHAP PENGEMBANGAN 🛠️
+              </div>
+              {children}{" "}
+            </Providers>
           </ReactQuery>
         </NextAuthProvider>
       </body>

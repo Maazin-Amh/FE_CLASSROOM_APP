@@ -3,7 +3,6 @@
 import { signOut, useSession } from "next-auth/react";
 import useGuruModule from "./lib";
 import { useRouter } from "next/navigation";
-import "@fortawesome/fontawesome-svg-core/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -24,7 +23,7 @@ import {
 } from "@headlessui/react";
 import Loading from "@/components/loading";
 
-export const CreateClassSchema = yup.object().shape({
+ const CreateClassSchema = yup.object().shape({
   nama_kelas: yup
     .string()
     .nullable()
@@ -33,7 +32,7 @@ export const CreateClassSchema = yup.object().shape({
   subject: yup.string().nullable().default(""),
 });
 
-export const ProfileSchema = yup.object().shape({
+ const ProfileSchema = yup.object().shape({
   nama: yup
     .string()
     .nullable()
@@ -105,19 +104,10 @@ const GuruPage = () => {
 
   return (
     <>
-    <div className="bg-teal-600 cursor-pointer z-50 sticky text-sm p-2 font-medium text-center text-white">
-     🎊 Happy New Year By Developer
-    </div>
       <header className="bg-white border-b h-16 flex items-center justify-between px-3 z-50  mb-10 border-slate-4000 sticky">
         <div className="item-center flex items-center">
-          <img
-            src="https://i.ibb.co.com/smg9rNW/logo.png"
-            alt=""
-            className="h-[60px]"
-          />
-
           <Link href={""}>
-            <p className="text-xl text-[#5f6368] font-normal">Classmeet</p>
+            <p className="text-xl text-[#5f6368] font-normal">EduCommunity</p>
           </Link>
         </div>
         <div className="flex gap-7">
