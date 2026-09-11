@@ -42,7 +42,7 @@ const useGuruModule = () => {
         keepPreviousData: true,
 
         select: (response) => response,
-      }
+      },
     );
 
     return {
@@ -67,7 +67,7 @@ const useGuruModule = () => {
         keepPreviousData: true,
 
         select: (response) => response,
-      }
+      },
     );
 
     return {
@@ -78,7 +78,7 @@ const useGuruModule = () => {
   };
 
   const createClass = (
-    payload: ClassCreatePayload
+    payload: ClassCreatePayload,
   ): Promise<ClassUpdateResponse> => {
     return axiosAuthClient
       .post(`/class/create-class`, payload)
@@ -89,22 +89,25 @@ const useGuruModule = () => {
     const { isLoading, mutate } = useMutation(
       (payload: ClassCreatePayload) => createClass(payload),
       {
-        onSuccess: (response) => {
-          console.log("first");
-          queryClient.invalidateQueries(["/class/list"]);
+        onSuccess: async (response) => {
+          await queryClient.refetchQueries({
+            queryKey: ["/class/list"],
+          });
+
           toastSuccess(response.message);
         },
-        onError: (gagal) => {
+        onError: () => {
           toastError();
         },
-      }
+      },
     );
+
     return { mutate, isLoading };
   };
 
   const createTugas = async (
     payload: TugasCreatePayload,
-    id: number
+    id: number,
   ): Promise<ClassUpdateResponse> => {
     if (payload.file !== undefined) {
       const res = await uploadSingle(payload.file);
@@ -126,12 +129,14 @@ const useGuruModule = () => {
       {
         onSuccess: (response) => {
           toastSuccess(response.message);
-          queryClient.invalidateQueries(["/class/list"]);
+          queryClient.invalidateQueries({
+            queryKey: ["/class/list"],
+          });
         },
         onError: (gagal) => {
           toastError();
         },
-      }
+      },
     );
     return { mutate, isLoading };
   };
@@ -148,7 +153,7 @@ const useGuruModule = () => {
       () => getDetailClass(id),
       {
         select: (response) => response,
-      }
+      },
     );
 
     return { data, isFetching, isLoading };
@@ -156,7 +161,7 @@ const useGuruModule = () => {
 
   const updateClass = (
     payload: ClassUpdatePayload,
-    id: number
+    id: number,
   ): Promise<ClassUpdateResponse> => {
     return axiosAuthClient
       .put(`/class/update/${id}`, payload)
@@ -174,14 +179,14 @@ const useGuruModule = () => {
           console.log("error", gagal);
           toastError();
         },
-      }
+      },
     );
     return { mutate, isLoading };
   };
 
   const updateTugas = (
     payload: TugasUpdatePayload,
-    id: number
+    id: number,
   ): Promise<TugasUpdateResponse> => {
     return axiosAuthClient
       .put(`/tugas/update/${id}`, payload)
@@ -199,7 +204,7 @@ const useGuruModule = () => {
           console.log("error", gagal);
           toastError();
         },
-      }
+      },
     );
     return { mutate, isLoading };
   };
@@ -216,7 +221,7 @@ const useGuruModule = () => {
       () => getDetailTugas(id),
       {
         select: (response) => response,
-      }
+      },
     );
 
     return { data, isFetching, isLoading };
@@ -230,7 +235,9 @@ const useGuruModule = () => {
       {
         onSuccess: (response) => {
           toastSuccess(response.data.message);
-          queryClient.invalidateQueries(["/class/list"]);
+          queryClient.invalidateQueries({
+            queryKey: ["/class/list"],
+          });
         },
         onError: (error: any) => {
           if (error.response.status == 422) {
@@ -239,7 +246,7 @@ const useGuruModule = () => {
             toastError();
           }
         },
-      }
+      },
     );
     return { mutate, isLoading };
   };
@@ -252,7 +259,9 @@ const useGuruModule = () => {
       {
         onSuccess: (response) => {
           toastSuccess(response.data.message);
-          queryClient.invalidateQueries(["/tugas/list"]);
+          queryClient.invalidateQueries({
+            queryKey: ["/tugas/list"],
+          });
         },
         onError: (error: any) => {
           if (error.response.status == 422) {
@@ -261,7 +270,7 @@ const useGuruModule = () => {
             toastError();
           }
         },
-      }
+      },
     );
     return { mutate, isLoading };
   };

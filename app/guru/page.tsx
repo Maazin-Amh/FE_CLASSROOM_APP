@@ -4,7 +4,17 @@ import { signOut, useSession } from "next-auth/react";
 import useGuruModule from "./lib";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faPlus,
+  faPen,
+  faTrash,
+  faUser,
+  faGear,
+  faArrowRightFromBracket,
+  faCopy,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useConfirmDelete } from "@/hook/useConfirmDelete";
 import InputText from "@/components/InputText";
@@ -23,7 +33,7 @@ import {
 } from "@headlessui/react";
 import Loading from "@/components/loading";
 
- const CreateClassSchema = yup.object().shape({
+const CreateClassSchema = yup.object().shape({
   nama_kelas: yup
     .string()
     .nullable()
@@ -32,7 +42,7 @@ import Loading from "@/components/loading";
   subject: yup.string().nullable().default(""),
 });
 
- const ProfileSchema = yup.object().shape({
+const ProfileSchema = yup.object().shape({
   nama: yup
     .string()
     .nullable()
@@ -46,14 +56,17 @@ import Loading from "@/components/loading";
     .required("tolong isi terlebih dahulu"),
 });
 
+const DEFAULT_AVATAR =
+  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png";
+
 const GuruPage = () => {
   const { useClassList, useDelete, useCreateClass } = useGuruModule();
   const { useProfile, useUpdateProfile } = useAuthModule();
   const { data, isFetching } = useClassList();
-  const { mutate: profilemutate } = useUpdateProfile();
+  const { mutate: profilemutate, isLoading: isload } = useUpdateProfile();
   const { data: profile } = useProfile();
-  const { mutate: mutases, isLoading: loading } = useDelete();
-  const { mutate: mutatescreate, isLoading } = useCreateClass();
+  const { mutate: mutases, isLoading: isDeleting } = useDelete();
+  const { mutate: mutatescreate, isLoading: isLoading } = useCreateClass();
   const router = useRouter();
   const { data: session, status } = useSession();
   const handleDelete = useConfirmDelete({
@@ -66,7 +79,11 @@ const GuruPage = () => {
     validationSchema: CreateClassSchema,
     enableReinitialize: true,
     onSubmit: (payload) => {
-      mutatescreate(payload);
+      mutatescreate(payload, {
+        onSuccess: () => {
+          closeCreateModal();
+        },
+      });
     },
   });
 
@@ -80,11 +97,16 @@ const GuruPage = () => {
     validationSchema: ProfileSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
-      profilemutate(values);
+      profilemutate(values, {
+        onSuccess: () => {
+          closeProfileModal();
+        },
+      });
     },
   });
 
-  const { handleChange, handleSubmit, handleBlur, values, errors } = formik;
+  const { handleChange, handleSubmit, handleBlur, values, errors, resetForm } =
+    formik;
   const {
     handleChange: handleChangeprofile,
     handleSubmit: handleSubmitprofile,
@@ -93,124 +115,284 @@ const GuruPage = () => {
     errors: erorprofile,
     setFieldValue,
   } = profileformik;
+  const openCreateModal = () => {
+    const modal = document.getElementById("hs-vertically-centered-modal");
 
-  // if(isFetching) {
-  //   return (
-  //     <div className="flex justify-center items-center w-full h-screen">
-  //       <Loading/>
-  //     </div>
-  //   )
-  // }
+    if (modal) {
+      modal.classList.remove("hidden");
+    }
+  };
+
+  const closeCreateModal = () => {
+    const modal = document.getElementById("hs-vertically-centered-modal");
+
+    if (modal) {
+      modal.classList.add("hidden");
+    }
+    resetForm();
+  };
+
+  const openProfileModal = () => {
+    const modal = document.getElementById("hs-vertically-centered-modal-1");
+
+    if (modal) {
+      modal.classList.remove("hidden");
+    }
+  };
+
+  const closeProfileModal = () => {
+    const modal = document.getElementById("hs-vertically-centered-modal-1");
+
+    if (modal) {
+      modal.classList.add("hidden");
+    }
+  };
 
   return (
     <>
-      <header className="bg-white border-b h-16 flex items-center justify-between px-3 z-50  mb-10 border-slate-4000 sticky">
+      <header className="bg-white border-b h-16 flex items-center justify-between  px-3 z-50  mb-10 border-slate-4000 sticky">
         <div className="item-center flex items-center">
           <Link href={""}>
             <p className="text-xl text-[#5f6368] font-normal">EduCommunity</p>
           </Link>
         </div>
-        <div className="flex gap-7">
-          <button
-            type="button"
-            className="hover:bg-white/20 text-xl  transition-all duration-75  rounded-full text-black inline-flex justify-center items-center gap-x-2"
-            data-hs-overlay="#hs-vertically-centered-modal"
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-          <div className="hs-dropdown inline-flex">
-            <button
-              id="hs-dropdown-unstyled"
-              type="button"
-              className="hs-dropdown-toggle hover:bg-white/20  transition-all duration-75 w-10 h-10 text-white inline-flex justify-center items-center gap-x-2"
-            >
-              <picture>
-                <img
-                  className="rounded-full object-cover w-10 h-10"
-                  src={
-                    profile?.data.avatar ||
-                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-                  }
-                  alt=""
-                  draggable="false"
-                />
-              </picture>
-            </button>
+        <button
+          type="button"
+          onClick={() => {
+            signOut({
+              redirect: false,
+            }).then(() => {
+              router.push("/login");
+            });
+          }}
+          className="flex items-center gap-3 px-3  py-2.5 text-sm text-white bg-red-500 "
+        >
+          Keluar dari akun
+        </button>
+      </header>
 
-            <div
-              className="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 w-auto hidden z-10 mt-2  bg-white shadow-md rounded-lg p-2 "
-              aria-labelledby="hs-dropdown-unstyled"
+      <main className=" max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <section className=" max-w-7xl mx-auto px-4 sm:px-6 pt-5">
+          <div
+            className="relative w-full h-[220px] sm:h-[270px] md:h-[310px] bg-cover bg-center"
+            style={{
+              backgroundImage: `url('https://i.ibb.co.com/SDHtvDjJ/edubg.png')`,
+            }}
+          >
+            <div className="absolute inset-0 bg-black/5 " />
+
+            <button
+              type="button"
+              onClick={openProfileModal}
+              className="absolute top-4 right-4 z-10  flex items-center gap-2 px-4  py-2.5 text-xl font-medium text-littlewhite"
             >
-              <p className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
-                {session?.user.email}
-              </p>
+              <FontAwesomeIcon icon={faGear} className="w-10" />
+            </button>
+            <div>
+              <img
+                src={profile?.data?.avatar || DEFAULT_AVATAR}
+                alt="Profile"
+                className=" absolute left-1/2 bottom-0 object-cover -translate-x-1/2 translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white p-1
+"
+              />
+            </div>
+          </div>
+          <div className="text-center pt-16 pb-7">
+            <h2 className=" text-2xl sm:text-3xl font-semibold text-gray-800 ">
+              {profile?.data?.nama || "Nama Guru"}
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500 ">
+              {session?.user?.email}
+            </p>
+
+            <p className="mt-2 text-sm text-gray-400 ">Guru • EduCommunity</p>
+          </div>
+
+          <div className="border-b border-gray-200">
+            <div className=" flex items-center justify-center gap-2 sm:gap-8">
               <button
-                className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                type="button"
+                className=" relative px-5  py-4 text-sm font-medium text-gray-900"
+              >
+                Kelas Saya
+                <span className=" absolute left-0 right-0 bottom-0 h-0.5 bg-gray-900" />
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   router.push("/guru/personal-info");
                 }}
+                className="  px-5  py-4 text-sm text-gray-500 hover:text-gray-900 transition
+              "
               >
-                Personal Info
-              </button>
-              <button
-                className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                data-hs-overlay="#hs-vertically-centered-modal-1"
-              >
-                Edit Profile
-              </button>
-              <button
-                className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                onClick={() => {
-                  signOut({ redirect: false }).then(() => {
-                    router.push("/login");
-                  });
-                }}
-              >
-                Logout
+                Informasi Pribadi
               </button>
             </div>
           </div>
+        </section>
+        <div className="flex flex-col mt-6 sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 ">
+          <div>
+            <h2 className=" text-xl  sm:text-2xl font-semibold text-doff">
+              Kelas Saya
+            </h2>
+
+            <p className="text-sm text-orangebold/70 mt-1 ">
+              {data?.data.length} kelas yang saya buat
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="bg-doff flex justify-between items-center p-4 text-littlewhite w-36 h-12 "
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            Buat Kelas
+          </button>
         </div>
-      </header>
+        {isFetching && (
+          <div className=" flex justify-center items-center py-20 ">
+            <div className=" w-8  h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin " />
+          </div>
+        )}
+
+        {!isFetching && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {data?.data.map((itemclass) => (
+              <section key={itemclass.id} className="relative group">
+                <div className=" border border-gray-200 overflow-hidden  cursor-pointer transition-all">
+                  <div
+                    onClick={() => {
+                      router.push(`/guru/detail/${itemclass.id}`);
+                    }}
+                    className="relative h-32 w-96"
+                  >
+                    <div className="absolute left-4 right-12 top-4 text-chocolate">
+                      <h3 className="text-lg font-bold truncate">
+                        {itemclass.nama_kelas}
+                      </h3>
+
+                      <p className="mt-1 text-sm font-normal">
+                        {itemclass.subject}
+                      </p>
+
+                      <div className="mt-6 flex items-center gap-2">
+                        <FontAwesomeIcon icon={faUser} className="text-sm" />
+
+                        <span className="text-xs font-medium truncate">
+                          {profile?.data?.nama}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="px-4 py-3 border-t border-orangebold/80">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-gray-400">Kode Kelas</p>
+
+                        <p className=" mt-1 text-sm font-semibold text-gray-700 ">
+                          {itemclass.code}
+                        </p>
+                      </div>
+                      <span>
+                        <FontAwesomeIcon
+                          onClick={() => {
+                            navigator.clipboard.writeText(itemclass.code || "");
+                          }}
+                          icon={faCopy}
+                          className="text-sm"
+                        />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <Menu>
+                  <MenuButton
+                    type="button"
+                    className=" absolute top-3 right-3 w-9 h-9 flex items-center  justify-center text-chocolate hover:bg-orangebold/80 hover:text-white transition-all focus:outline-none"
+                  >
+                    <FontAwesomeIcon icon={faEllipsisVertical} />
+                  </MenuButton>
+
+                  <Transition
+                    enter="transition duration-100 ease-out"
+                    enterFrom="transform scale-95 opacity-0"
+                    enterTo="transform scale-100 opacity-100"
+                    leave="transition duration-75 ease-in"
+                    leaveFrom="transform scale-100 opacity-100"
+                    leaveTo="transform scale-95 opacity-0"
+                  >
+                    <MenuItems
+                      anchor="bottom end"
+                      className="
+                        w-36 bg-white border border-gray-200 shadow-lg p-1 focus:outline-none z-[100]
+                      "
+                    >
+                      <MenuItem>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            router.push(`/guru/update/${itemclass.id}`);
+                          }}
+                          className=" w-full flex items-center gap-3 px-3 py-2 text-sm text-chocolate hover:bg-gray-100 "
+                        >
+                          <FontAwesomeIcon icon={faPen} className="w-3" />
+                          Edit
+                        </button>
+                      </MenuItem>
+
+                      <MenuItem>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleDelete(itemclass.id || 0);
+                          }}
+                          disabled={isDeleting}
+                          className=" w-full flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-50"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="w-3" />
+                          Hapus
+                        </button>
+                      </MenuItem>
+                    </MenuItems>
+                  </Transition>
+                </Menu>
+              </section>
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* layout modal ini sya khususkan buat kelas */}
       <div
         id="hs-vertically-centered-modal"
-        className="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+        className="hs-overlay hidden fixed inset-0 z-[80] overflow-y-auto bg-black/40 "
       >
-        <div className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
-          <div className="w-full flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto">
-            <div className="flex justify-between items-center py-3 px-4 border-b">
-              <h3 className="font-bold text-gray-800">Create Class</h3>
+        <div className=" min-h-full flex items-center justify-center p-4 ">
+          <div className="w-full max-w-lg bg-littlewhite shadow-xl">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 ">
+              <h3 className="  font-semibold text-gray-800 ">Buat Kelas</h3>
+
               <button
                 type="button"
-                className="flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
-                data-hs-overlay="#hs-vertically-centered-modal"
+                onClick={closeCreateModal}
+                className=" w-8  h-8 flex items-center  justify-center text-chocolate hover:text-red-500 "
               >
-                <span className="sr-only">Close</span>
-                <svg
-                  className="flex-shrink-0 size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M18 6 6 18"></path>
-                  <path d="m6 6 12 12"></path>
-                </svg>
+                <FontAwesomeIcon icon={faX} className="w-2" />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto">
+
+            <div className="p-5">
               <FormikProvider value={formik}>
                 <Form className="space-y-5" onSubmit={handleSubmit}>
                   <section>
-                    <Label htmlFor="nama_kelas" title="Nama kelas" />
+                    <Label htmlFor="nama_kelas" title="Nama Kelas" />
+
                     <InputText
                       value={values.nama_kelas}
-                      placeholder="nama kelas"
+                      placeholder="Nama Kelas"
                       id="nama_kelas"
                       name="nama_kelas"
                       onChange={handleChange}
@@ -221,10 +403,11 @@ const GuruPage = () => {
                   </section>
 
                   <section>
-                    <Label htmlFor="subject" title="subject" />
+                    <Label htmlFor="subject" title="Subject" />
+
                     <InputText
                       value={values.subject}
-                      placeholder="subject"
+                      placeholder="Deskripsi"
                       id="subject"
                       name="subject"
                       onChange={handleChange}
@@ -233,19 +416,22 @@ const GuruPage = () => {
                       messageError={getIn(errors, "subject")}
                     />
                   </section>
-                  <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t">
+
+                  <div className=" flex justify-end gap-3  pt-4  border-t border-gray-20  ">
                     <button
                       type="button"
-                      className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
-                      data-hs-overlay="#hs-vertically-centered-modal"
+                      onClick={closeCreateModal}
+                      className="border-doff bg-white border text-doff w-36 h-12 "
                     >
-                      Close
+                      Batal
                     </button>
+
                     <button
                       type="submit"
-                      className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                      disabled={isLoading}
+                      className="bg-doff text-littlewhite w-36 h-12 "
                     >
-                      Create Class
+                      {isLoading ? "Membuat..." : "Buat Kelas"}
                     </button>
                   </div>
                 </Form>
@@ -255,121 +441,89 @@ const GuruPage = () => {
         </div>
       </div>
 
+      {/* Layout ini sya buat khsusus update Profile */}
       <div
         id="hs-vertically-centered-modal-1"
-        className="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+        className=" hs-overlay hidden fixed inset-0  z-[80] overflow-y-auto bg-black/40 "
       >
-        <div className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
-          <div className="w-full flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto">
-            <div className="flex justify-between items-center py-3 px-4 border-b">
-              <h3 className="font-bold text-gray-800">Update Profile</h3>
+        <div className="min-h-full flex  items-center justify-center p-4 ">
+          <div className="w-full max-w-lg bg-littlewhite">
+            <div className=" flex items-center justify-between   px-5 py-4 border-b border-gray-200 ">
+              <h3 className=" font-semibold text-gray-800 ">Edit Profile</h3>
               <button
                 type="button"
-                className="flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
-                data-hs-overlay="#hs-vertically-centered-modal-1"
+                onClick={closeProfileModal}
+                className=" w-8  h-8 flex items-center  justify-center text-chocolate hover:text-red-500 "
               >
-                <span className="sr-only">Close</span>
-                <svg
-                  className="flex-shrink-0 size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M18 6 6 18"></path>
-                  <path d="m6 6 12 12"></path>
-                </svg>
+                <FontAwesomeIcon icon={faX} className="w-2" />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto">
-              <picture className="justify-center flex">
+
+            <div className="p-5">
+              <div className=" flex justify-center mb-6 ">
                 <img
-                  className="rounded-full w-20 h-20 object-cover"
-                  src={
-                    valueprofile.avatar ||
-                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-                  }
-                  alt="img"
+                  src={valueprofile.avatar || DEFAULT_AVATAR}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover"
                 />
-              </picture>
+              </div>
+
               <FormikProvider value={profileformik}>
                 <Form className="space-y-5" onSubmit={handleSubmitprofile}>
-                  <section className="relative">
-                    <div className="flex gap-2 items-center">
-                      <span className="size-10 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500">
-                        <svg
-                          className="flex-shrink-0 size-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="17 8 12 3 7 8"></polyline>
-                          <line x1="12" x2="12" y1="3" y2="15"></line>
-                        </svg>
-                      </span>
-                      <p>Upload Image</p>
-                    </div>
+                  <section>
                     <input
                       type="file"
                       id="file"
-                      className="opacity-0 absolute top-0 "
-                      onChange={(event: any) => {
-                        const file = event.target.files[0];
+                      accept="image/*"
+                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 border border-gray-500  file:bg-gray-100 file:text-gray-700 "
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
 
-                        // if (file.type !== "image/jpeg") {
-                        //   return alert("type tidak sesauai");
-                        // }
+                        if (!file) {
+                          return;
+                        }
 
-                        let reader = new FileReader();
+                        const reader = new FileReader();
+
                         reader.onloadend = () => {
                           setFieldValue("avatar", reader.result);
                         };
 
                         reader.readAsDataURL(file);
-                        setFieldValue("file", file);
 
-                        console.log(file);
+                        setFieldValue("file", file);
                       }}
                     />
                   </section>
+
                   <section>
-                    <Label htmlFor="nama" title="Nama" />
                     <InputText
-                      value={valueprofile.nama}
-                      placeholder="nama"
+                      value={valueprofile.nama || ""}
+                      placeholder="Nama"
                       id="nama"
                       name="nama"
                       onChange={handleChangeprofile}
-                      onBlur={handleBlur}
+                      onBlur={blurprofile}
                       isError={getIn(erorprofile, "nama")}
                       messageError={getIn(erorprofile, "nama")}
                     />
                   </section>
-                  <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t">
+
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                     <button
                       type="button"
-                      className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
-                      data-hs-overlay="#hs-vertically-centered-modal-1"
+                      onClick={closeProfileModal}
+                      className="border-doff bg-white border text-doff w-36 h-12 "
                     >
-                      Close
+                      Batal
                     </button>
+
                     <button
                       type="submit"
-                      className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                      disabled={isload}
+                      className="bg-doff text-littlewhite w-36 h-12 "
                     >
-                      Save
+                      {isload ? "Menyimpan..." : "Simpan"}
                     </button>
                   </div>
                 </Form>
@@ -378,81 +532,6 @@ const GuruPage = () => {
           </div>
         </div>
       </div>
-
-      <main className="flex flex-wrap gap-7 z-50  justify-start px-10">
-        {data?.data
-          .filter((itemclass) => itemclass.created_by.id === session?.user.id)
-          .map((itemclass, index) => (
-            <section key={itemclass.created_by.id} className="relative">
-              <div
-                onClick={() => {
-                  router.push(`/guru/detail/${itemclass.id}`);
-                }}
-                className="border-[1px] bg-white cursor-pointer flex justify-between flex-col rounded-md w-[302px] h-[296px] border-slate-4000"
-              >
-                <div className="bg-[url('https://gstatic.com/classroom/themes/img_reachout.jpg')]  px-[1rem] pt-[1rem] pb-[0.75rem] flex relative flex-col justify-between rounded-t-md h-[5rem] bg-center bg bg-cover">
-                  <div className="flex justify-between items-center">
-                    <div className="text-white">
-                      <h1 className="hover:underline">
-                        {itemclass.nama_kelas}
-                      </h1>
-                      <span>
-                        <p>{itemclass.subject}</p>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t h-[2rem]  border-slate-4000 px-[1rem]">
-                  code :
-                  <h3 className="float-right font-semibold">
-                    {itemclass.code}
-                  </h3>
-                </div>
-              </div>
-
-              <Menu>
-                <MenuButton className="flex justify-center w-10 h-10 absolute top-3 right-3 items-center gap-2 rounded-full py-3 px-4.5 font-semibold hover:bg-white/20 text-white focus:outline-none">
-                  <FontAwesomeIcon icon={faEllipsisVertical} />
-                </MenuButton>
-                <Transition
-                  enter="transition ease-out duration-75"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <MenuItems
-                    anchor="bottom end"
-                    className=" origin-top-right rounded-xl bg-white shadow-sm p-1 text-sm/6 text-white [--anchor-gap:var(--spacing-1)] focus:outline-none"
-                  >
-                    <MenuItem>
-                      <button
-                        onClick={() => {
-                          router.push(`/guru/update/${itemclass.id}`);
-                        }}
-                        className="flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                      >
-                        Edit
-                      </button>
-                    </MenuItem>
-                    <MenuItem>
-                      <button
-                        onClick={() => {
-                          handleDelete(itemclass.id || 0);
-                        }}
-                        className="flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                      >
-                        Delete
-                      </button>
-                    </MenuItem>
-                  </MenuItems>
-                </Transition>
-              </Menu>
-            </section>
-          ))}
-      </main>
     </>
   );
 };

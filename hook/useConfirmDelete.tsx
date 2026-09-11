@@ -2,11 +2,7 @@ import { useToast } from "@chakra-ui/react";
 
 type SubmitFunction = (id: number) => any;
 
-export function useConfirmDelete({
-  onSubmit,
-}: {
-  onSubmit: SubmitFunction;
-}) {
+export function useConfirmDelete({ onSubmit }: { onSubmit: SubmitFunction }) {
   const toast = useToast();
 
   const handleDelete = (id: number) => {
@@ -16,24 +12,36 @@ export function useConfirmDelete({
       status: "warning",
       duration: null,
       isClosable: true,
+      position: "bottom-right",
       render: () => (
-        <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-md">
-          <p className="text-gray-700 mb-2">Apakah Anda yakin ingin menghapus item ini?</p>
-          <div className="flex justify-center gap-3">
+        <div className="w-[320px] bg-littlewhite border border-cream p-5">
+          <div className="mb-4">
+            <p className="text-sm font-semibold text-gray-800">kamu Yakin?</p>
+
+            <p className="text-sm text-gray-500 mt-1">
+              Semua data yang terhapus tidak bisa dikembalikan.
+            </p>
+          </div>
+
+          <div className="flex justify-end gap-2">
             <button
-              className=" hover:bg-red-600 text-red-600 hover:text-white px-4 py-2 rounded "
-              onClick={async () => {
-                await onSubmit(id);
-                toast.closeAll(); 
-              }}
-            >
-              Hapus
-            </button>
-            <button
-              className=" hover:bg-gray-300 text-gray-700 px-4 py-2 rounded"
+              type="button"
+             className="border-doff bg-white border text-doff w-36 h-12 "
               onClick={() => toast.closeAll()}
             >
               Batal
+            </button>
+
+            <button
+              type="button"
+              className="bg-doff text-littlewhite w-36 h-12  hover:bg-red-500 transition-all"
+              onClick={async () => {
+                await onSubmit(id);
+
+                toast.closeAll();
+              }}
+            >
+              Hapus
             </button>
           </div>
         </div>

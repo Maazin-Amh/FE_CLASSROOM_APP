@@ -106,7 +106,7 @@ const Register = () => {
             <div className="mb-5">
               <InputText
                 value={values.username}
-                placeholder="your username"
+                placeholder="username"
                 id="username"
                 name="username"
                 onChange={handleChange}

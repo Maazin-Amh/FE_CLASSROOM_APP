@@ -159,17 +159,7 @@ const Login = () => {
           </Form>
         </FormikProvider>
       </div>
-      <div
-        className="
-          hidden
-          md:block
-          w-1/2
-          min-h-screen
-          bg-gradient-to-bl
-          from-orangebold
-          to-chocolate
-        "
-      />
+      <div className=" hidden md:block w-1/2 min-h-screen bg-gradient-to-bl from-orangebold to-chocolate" />
     </div>
   );
 };

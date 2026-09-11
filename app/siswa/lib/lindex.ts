@@ -2,7 +2,13 @@ import useAxiosAuth from "@/hook/useAuthAxios";
 import { useToast } from "@/hook/useToast";
 import useUploadFile from "@/hook/useUploadFile";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { JoinPayload, SiswaResponse, SubmitPayload, SubmitResponse, TugasDetailResponse } from "../interface";
+import {
+  JoinPayload,
+  SiswaResponse,
+  SubmitPayload,
+  SubmitResponse,
+  TugasDetailResponse,
+} from "../interface";
 import { ClassUpdateResponse } from "@/app/guru/interface";
 
 const useSiswaModule = () => {
@@ -15,13 +21,8 @@ const useSiswaModule = () => {
     pageSize: 10,
   };
 
-
-  const JoinClass = async (
-    payload: JoinPayload,
-  ): Promise<SiswaResponse> => {
-    return axiosAuthClient
-      .post(`/class/join`, payload)
-      .then((res) => res.data);
+  const JoinClass = async (payload: JoinPayload): Promise<SiswaResponse> => {
+    return axiosAuthClient.post(`/class/join`, payload).then((res) => res.data);
   };
 
   const useJoinClass = () => {
@@ -30,13 +31,39 @@ const useSiswaModule = () => {
       {
         onSuccess: (response) => {
           toastSuccess(response.message);
-          queryClient.invalidateQueries(["/class/list"]);
+          queryClient.invalidateQueries({
+            queryKey: ["/class/list"],
+              refetchType: "active",
+          });
         },
         onError: (gagal) => {
           toastError();
         },
-      }
+      },
     );
+    return { mutate, isLoading };
+  };
+
+  const LeaveClass = async (id: number): Promise<SiswaResponse> => {
+    return axiosAuthClient
+      .delete(`/class/keluar/${id}`)
+      .then((res) => res.data);
+  };
+
+  const useKeluarClass = () => {
+    const { isLoading, mutate } = useMutation((id: number) => LeaveClass(id), {
+      onSuccess: (response) => {
+        toastSuccess(response.message);
+        queryClient.invalidateQueries({
+          queryKey: ["/class/list"],
+            refetchType: "active",
+        });
+      },
+      onError: () => {
+        toastError();
+      },
+    });
+
     return { mutate, isLoading };
   };
 
@@ -52,16 +79,15 @@ const useSiswaModule = () => {
       () => getDetailTugas(id),
       {
         select: (response) => response,
-      }
+      },
     );
 
     return { data, isFetching, isLoading };
   };
 
-  
   const createSubmit = async (
     payload: SubmitPayload,
-    id: number
+    id: number,
   ): Promise<SubmitResponse> => {
     if (payload.file !== undefined) {
       const res = await uploadSingle(payload.file);
@@ -83,23 +109,24 @@ const useSiswaModule = () => {
       {
         onSuccess: (response) => {
           toastSuccess(response.message);
-          queryClient.invalidateQueries(["/tugas/list"]);
+          queryClient.invalidateQueries({
+            queryKey: ["/tugas/list"],
+          });
         },
         onError: (gagal) => {
           toastError();
         },
-      }
+      },
     );
     return { mutate, isLoading };
   };
 
-
   return {
     useJoinClass,
+    useKeluarClass,
     useDetailTugas,
-    useSubmitAssingmet
-  }
+    useSubmitAssingmet,
+  };
 };
-
 
 export default useSiswaModule;
