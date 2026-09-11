@@ -5,6 +5,7 @@ import NextAuthProvider from "@/components/NextAuthProvider";
 import { ReactNode } from "react";
 import { Session } from "next-auth";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next"
 import ReactQuery from "@/components/ReactQuery";
 import { Providers } from "./providers";
 import PrelineScript from "@/components/ PrelineScript";
@@ -58,9 +59,10 @@ export default function RootLayout({ children, session }: NextAuthProps) {
             <Providers>
               {" "}
               <div className="bg-doff cursor-pointer z-50 sticky text-sm p-2 font-medium text-center text-white">
-                WEBSITE INI MASIH DALAM TAHAP PENGEMBANGAN 🛠️
+               MAAF WEBSITE INI MASIH DALAM TAHAP PENGEMBANGAN 🛠️
               </div>
               {children}{" "}
+              <Analytics/>
             </Providers>
           </ReactQuery>
         </NextAuthProvider>

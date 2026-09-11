@@ -26,7 +26,7 @@ export default function PersonalInfo() {
       </header>
 
       <section className="block md:flex md:min-h-[calc(100vh-4rem)] md:w-full bg-littlewhite">
-        <div className="flex md:w-1/2 flex-col justify-center items-center px-6 sm:px-10 py-10">
+        <div className="flex md:w-1/2 h-screen md:h-auto flex-col justify-center items-center px-6 sm:px-10 py-10">
           <div className="w-full max-w-md bg-white border border-cream p-6 sm:p-8">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-gray-800">
